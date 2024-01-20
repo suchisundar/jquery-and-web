@@ -5,6 +5,7 @@ const $searchInput = $("#search");
 /* use ajax result to add a gif */
 
 function addGif(res) {
+    console.log(res);
   let numResults = res.data.length;
   if (numResults) {
     let randomIdx = Math.floor(Math.random() * numResults);

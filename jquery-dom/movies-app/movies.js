@@ -1,13 +1,9 @@
-// id to keep track of which element to remove (this would be better not in global scope)
-let currentId = 0;
+$(function () {
 
-// list of all of movies in memory for sorting / repainting
-let moviesList = [];
+  let currentId = 0;
+  let moviesList = [];
 
-$(function() {
-  // when you click the delete button, remove the closest parent tr
-
-  $("#new-movie-form").on("submit", function(evt) {
+  $("#new-movie-form").on("submit", function (evt) {
     evt.preventDefault();
     let title = $("#title").val();
     let rating = $("#rating").val();
@@ -15,57 +11,49 @@ $(function() {
     let movieData = { title, rating, currentId };
     const HTMLtoAppend = createMovieDataHTML(movieData);
 
-    currentId++
+    currentId++;
     moviesList.push(movieData);
 
     $("#movie-table-body").append(HTMLtoAppend);
     $("#new-movie-form").trigger("reset");
   });
 
-  // when the delete button is clicked, remove the closest parent tr and remove from the array of movies
+  $("tbody").on("click", ".btn.btn-danger", function (evt) {
+    // Find the index where this movie is
+    let indexToRemoveAt = moviesList.findIndex(
+      (movie) => movie.currentId === +$(evt.target).data("deleteId")
+    );
 
-  $("tbody").on("click", ".btn.btn-danger", function(evt) {
-    // find the index where this movie is
-    let indexToRemoveAt = moviesList.findIndex(movie => movie.currentId === +$(evt.target).data("deleteId"))
-    
-    // remove it from the array of movies
-    moviesList.splice(indexToRemoveAt, 1)
+    // Remove it from the array of movies
+    moviesList.splice(indexToRemoveAt, 1);
 
-    // remove it from the DOM
-    $(evt.target)
-      .closest("tr")
-      .remove();
-    
+    // Remove it from the DOM
+    $(evt.target).closest("tr").remove();
   });
 
-  // when an arrow is clicked, 
-  $(".fas").on("click", function(evt) {
-    
-    // figure out what direction we are sorting and the key to sort by
+  $(".fas").on("click", function (evt) {
+    // Figure out what direction we are sorting and the key to sort by
     let direction = $(evt.target).hasClass("fa-sort-down") ? "down" : "up";
     let keyToSortBy = $(evt.target).attr("id");
     let sortedMovies = sortBy(moviesList, keyToSortBy, direction);
-    
-    // empty the table
+
+    // Empty the table
     $("#movie-table-body").empty();
 
-    // loop over our object of sortedMovies and append a new row
+    // Loop over our object of sortedMovies and append a new row
     for (let movie of sortedMovies) {
       const HTMLtoAppend = createMovieDataHTML(movie);
       $("#movie-table-body").append(HTMLtoAppend);
     }
 
-    // toggle the arrow
+    // Toggle the arrow
     $(evt.target).toggleClass("fa-sort-down");
     $(evt.target).toggleClass("fa-sort-up");
   });
 });
 
-/* accepts an array of objects and a key and sorts by that key */
-
 function sortBy(array, keyToSortBy, direction) {
-  return array.sort(function(a, b) {
-    // since rating is a number, we have to convert these strings to numbers
+  return array.sort(function (a, b) {
     if (keyToSortBy === "rating") {
       a[keyToSortBy] = +a[keyToSortBy];
       b[keyToSortBy] = +b[keyToSortBy];
@@ -79,8 +67,6 @@ function sortBy(array, keyToSortBy, direction) {
   });
 }
 
-/* createMovieDataHTML accepts an object with title and rating keys and returns a string of HTML */
-
 function createMovieDataHTML(data) {
   return `
     <tr>
@@ -91,6 +77,6 @@ function createMovieDataHTML(data) {
           Delete
         </button>
       </td>
-    <tr>
+    </tr>
   `;
 }

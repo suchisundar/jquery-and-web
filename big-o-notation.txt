@@ -1,6 +1,6 @@
 In this exercise, you’ll analyze expressions and code to figure out the time complexity.
 
-## **Step One: Simplifying Expressions**
+ ## **Step One: Simplifying Expressions**
 
 Simplify the following big O expressions as much as possible:
 
